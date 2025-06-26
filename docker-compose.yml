@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    
+    container_name: django_backend
+    volumes:
+      - ./backend/blog_backend:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ./frontend/blog_frontend
+    
+    container_name: react_frontend
+    volumes:
+      - ./frontend/blog_frontend:/app
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
